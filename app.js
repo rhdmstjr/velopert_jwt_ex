@@ -27,7 +27,7 @@ app.get('/', (req, res) => {
 });
 
 // open the server
-app.listen(port, () => {
+app.listen(port, '0.0.0.0', () => {
     console.log(`Express is running on port ${port}`)
 });
 
@@ -39,3 +39,4 @@ db.once('open', () => {
     console.log('connected to monodb server');
 });
 
+console.log(`server work on 0.0.0.0:${port}`)
