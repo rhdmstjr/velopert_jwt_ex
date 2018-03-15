@@ -26,6 +26,10 @@ app.get('/', (req, res) => {
     res.send('Hello JWT')
 });
 
+// configure api router
+const api = require('./routes/api');
+app.use('/api', api);
+
 // open the server
 app.listen(port, '0.0.0.0', () => {
     console.log(`Express is running on port ${port}`)
