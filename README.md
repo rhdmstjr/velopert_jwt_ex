@@ -10,3 +10,9 @@ Express 를 통한 jwt 예제 개발 (velopert 씨 블로그 따라하기)
 # nodemon
 서버를 수정하고 테스팅할 때마다 서버를 재시작해줘야하는데 이를 자동화 해주는 친구
 $ nodemon 파일명.js
+
+
+# node 
+
+* warning check 하면서 돌리기 위함
+$ node --trace-warnings app.js

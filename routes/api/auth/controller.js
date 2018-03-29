@@ -1,4 +1,6 @@
+const jwt = require('jsonwebtoken');
 const User = require('../../../models/user')
+
 
 
 /*
@@ -36,7 +38,7 @@ exports.register = (req, res) => {
             return newUser.assignAdmin();
         } else {
             // if not, return a promise that returns false
-            return Promise.resolve(false);
+            return Promise.resolve(false)
         }
     }
     
@@ -68,7 +70,7 @@ exports.register = (req, res) => {
 exports.test = (req, res) => {
     res.send('[GET]this. router is working');
     
-    const { username, password } = { "username": "rhdmstjr9", "password": "hello"};
+    const { username, password } = { "username": "rhdmstjr11", "password": "hello"};
     let newUser = null;
     
     console.log(username);
@@ -102,6 +104,11 @@ exports.test = (req, res) => {
     // respond to the client
     const respond = (isAdmin) => {
         console.log("respond called");
+        console.log({
+            message: 'registered successfully',
+            admin: isAdmin ? true : false
+        });
+        
         res.json({
             message: 'registered successfully',
             admin: isAdmin ? true : false
@@ -121,5 +128,130 @@ exports.test = (req, res) => {
     .then(count)
     .then(assign)
     .then(respond)
-    // .catch(onError)
+    .catch(onError)
+}
+
+
+/*
+    POST /api/auth/login
+    {
+        username,
+        password
+    }
+*/
+
+
+exports.login_test = (req, res) => {
+    res.send('[GET]login api is working')
+    
+    //const {username, password} = req.body;
+    const {username, password} = { 'username':'rhdmstjr11', 'password':'hello'};
+    const secret = req.app.get('jwt-secret')
+    
+    console.log(secret);
+    
+    // check the user info & generate the jwt
+    const check = (user) => {
+        if (!user){
+            // user does not exist
+            throw new Error('login failed')
+        } else {
+            // user exists, check the password
+            if (user.verify(password)){
+                // create a promise that generates jwt asynchronously
+                const p = new Promise((resolve, reject) => {
+                    jwt.sign({
+                        _id: user._id,
+                        username: user.username,
+                        admin: user.admin
+                    },
+                    secret,
+                    {
+                        expiresIn: '7d',
+                        issuer: 'rhdmstjr',
+                        subject: 'userInfo'
+                    }, (err, token) => {
+                        if (err) reject(err);
+                        resolve(token);
+                    })
+                });
+                return p;
+            } else {
+                throw new Error('login failed');
+            }
+        }
+    }
+    
+    // respond the token
+    const respond = (token) => {
+        console.log("[respond]");
+        console.log({
+            message: 'logged in successfully',
+            token
+        });
+        res.json({
+            message: 'logged in successfully',
+            token
+        })
+    }
+    
+    
+    //error occured
+    const onError = (error) => {
+        res.status(403).json({
+            message: error.message
+        })
+    }
+    
+    User.findOneByUsername(username)
+    .then(check)
+    .then(respond)
+    .catch(onError)
+}
+
+
+/*
+    GET /api/auth/check
+*/
+
+exports.check = (req, res) => {
+    // read the token from header or url
+    const token = req.headers['x-access-token'] || req.query.token
+    
+    // token does not exist 
+    if(!token){
+        return res.status(403).json({
+            success: false,
+            message: 'not logged in'
+        })
+    }
+    
+    // create a promise that decodes the token
+    const p = new Promise(
+        (resolve, reject) => {
+            jwt.verify(token, req.app.get('jwt-secret'), (err, decoded) => {
+                if(err) reject(err)
+                resolve(decoded)
+            })
+        })
+    )
+    
+    // if token is valid, it will respond with its info
+    const respond = (token) => {
+        res.json({
+            success: true,
+            info: token
+        })
+    }
+    
+    // if it has failed to verify, it will an error message
+    const onError = (error) => {
+        res.status(403).json({
+            success: false,
+            message: error.message
+        })
+    }
+    
+    // process the promise
+    p.then(respond).catch(onError)
 }

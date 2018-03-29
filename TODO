@@ -11,3 +11,5 @@
     
     막힌 부분:
     
+        UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): Error: Can't set headers after they are sent.
+            controller 부분에서 warning 발생하는 부분 수정
