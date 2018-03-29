@@ -13,3 +13,12 @@
     
         UnhandledPromiseRejectionWarning: Unhandled promise rejection (rejection id: 1): Error: Can't set headers after they are sent.
             controller 부분에서 warning 발생하는 부분 수정
+            
+20180329
+    튜토리얼 구현 완성 (미들웨어 사용)
+    
+    앞으로 해야할 것:
+        hapi로 동일한 기능 작동하도록 구현
+        noSQL 관련해서 공부 (어떻게 데이터들을 저장하고 관리할지가 머리속에 그려져야함)
+        미들웨어 기능을 전반적으로 써야하는데 어떻게 하면 좀더 코드에서 쉽게 쓸수 있을지
+        
